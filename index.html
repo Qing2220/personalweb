@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>门诊预约与分诊协作 · FDE 九阶段交付</title>
+<meta name="description" content="FDE 九阶段课程作业：门诊预约与分诊协作。9 阶段、27 项任务、9 道关卡，交付技术方案与提示词。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231f4e46'/%3E%3Cpath d='M9 16h14M16 9v14' stroke='%23f6f3ec' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --paper:#f7f5f0;
+    --card:#fffdf8;
+    --ink:#1c1b18;
+    --muted:#6b665d;
+    --line:#ddd7c9;
+    --accent:#1f4e46;
+    --accent-soft:#e6ece8;
+    --warn:#8a5a1f;
+    --warn-soft:#f3ead9;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent);text-underline-offset:3px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  /* 顶部 */
+  header{padding:64px 0 40px;border-bottom:1px solid var(--line)}
+  .eyebrow{
+    font-size:12px;letter-spacing:.18em;color:var(--muted);
+    text-transform:uppercase;margin:0 0 18px;
+  }
+  h1{
+    font-family:"Songti SC","Noto Serif SC",Georgia,serif;
+    font-size:clamp(30px,5vw,50px);
+    line-height:1.25;font-weight:700;margin:0 0 16px;letter-spacing:-.01em;
+  }
+  .lede{font-size:17px;color:var(--muted);max-width:62ch;margin:0 0 24px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted)}
+  .meta b{color:var(--ink);font-weight:600}
+
+  /* 通用区块 */
+  section{padding:52px 0;border-bottom:1px solid var(--line)}
+  .section-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:26px;flex-wrap:wrap}
+  h2{
+    font-family:"Songti SC","Noto Serif SC",Georgia,serif;
+    font-size:24px;margin:0;font-weight:700;
+  }
+  .section-note{font-size:13px;color:var(--muted)}
+
+  /* 交付物 */
+  .deliverables{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+  .doc{
+    display:block;text-decoration:none;color:inherit;
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px 22px 18px;transition:border-color .18s,transform .18s,box-shadow .18s;
+  }
+  .doc:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 22px rgba(31,78,70,.08)}
+  .doc .tag{font-size:11px;letter-spacing:.1em;color:var(--accent);font-weight:700}
+  .doc h3{font-size:17px;margin:8px 0 6px;font-weight:700}
+  .doc p{margin:0;font-size:13.5px;color:var(--muted)}
+  .doc .file{margin-top:14px;font-size:12px;color:var(--muted);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+
+  /* 数字 */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+  .stat .n{font-family:"Songti SC","Noto Serif SC",Georgia,serif;font-size:34px;line-height:1;font-weight:700}
+  .stat .n small{font-size:15px;color:var(--muted);font-weight:400}
+  .stat .k{margin-top:10px;font-size:14px;font-weight:600}
+  .stat .d{margin-top:4px;font-size:12.5px;color:var(--muted)}
+  .stat.warn .n{color:var(--warn)}
+
+  /* 九阶段 */
+  .stages{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+  .stage{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px 20px;display:flex;flex-direction:column;gap:8px;
+  }
+  .stage .top{display:flex;align-items:center;gap:10px}
+  .stage .num{
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:12px;color:var(--accent);background:var(--accent-soft);
+    border-radius:6px;padding:2px 7px;font-weight:700;
+  }
+  .stage h3{font-size:16px;margin:0;font-weight:700}
+  .stage .goal{font-size:13px;color:var(--muted);margin:0}
+  .stage .gate{
+    font-size:12.5px;color:var(--muted);border-left:2px solid var(--line);
+    padding-left:10px;margin:2px 0 0;
+  }
+  .status{
+    margin-top:auto;display:inline-flex;align-items:center;gap:6px;
+    font-size:11.5px;font-weight:600;padding:4px 9px;border-radius:999px;align-self:flex-start;
+  }
+  .status.done{background:var(--accent-soft);color:var(--accent)}
+  .status.part{background:var(--warn-soft);color:var(--warn)}
+  .status.todo{background:#efece5;color:#7c766b}
+  .stage a{font-size:12.5px;color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(31,78,70,.25);align-self:flex-start}
+  .stage a:hover{border-bottom-color:var(--accent)}
+
+  /* 代码 */
+  .cmd{position:relative;background:#20211f;color:#e8e4da;border-radius:var(--radius);padding:20px 22px;overflow:auto}
+  .cmd pre{margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;line-height:1.85}
+  .cmd .c{color:#8f9a8f}
+  .cmd button{
+    position:absolute;top:12px;right:12px;background:#33352f;color:#dcd8cc;border:1px solid #4a4c44;
+    border-radius:7px;font-size:12px;padding:5px 10px;cursor:pointer;
+  }
+  .cmd button:hover{background:#3d3f38}
+
+  ul.plain{margin:0;padding-left:20px;color:var(--muted);font-size:14px}
+  ul.plain li{margin:6px 0}
+  ul.plain b{color:var(--ink);font-weight:600}
+
+  footer{padding:34px 0 56px;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  footer a{color:var(--muted)}
+
+  @media (max-width:600px){
+    header{padding:44px 0 32px}
+    section{padding:40px 0}
+    .wrap{padding:0 18px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <p class="eyebrow">开源创新思维 · 课程作业 · FDE 九阶段</p>
+    <h1>门诊预约与分诊协作</h1>
+    <p class="lede">
+      患者在手机上约到了号，到院仍要重新排队分诊；号源、排班、叫号三处版本不一致；过号规则制度与现场做法不一样；加号靠手写条子，没有留痕。
+      这份作业把问题收敛成可验收的业务结果，并按 FDE 九阶段交付方案与提示词。
+    </p>
+    <div class="meta">
+      <span><b>杨美玲</b> · f25011412</span>
+      <span>结构依据：训练站 9 阶段 / 27 任务 / 9 关卡（<code>536ab61</code>）</span>
+      <span>技术栈：Python 3.11 · FastAPI · Ollama</span>
+      <span>2026-11</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="deliverables">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>交付物</h2>
+        <span class="section-note">主交付两份，过程文档七份</span>
+      </div>
+      <div class="deliverables">
+        <a class="doc" href="docs/技术方案.docx">
+          <div class="tag">主交付 · WORD</div>
+          <h3>技术方案</h3>
+          <p>16 章、40 张表：27 条需求追溯矩阵、架构、接口、权限、数据红线、本地部署、harness 用例。</p>
+          <div class="file">docs/技术方案.docx · 62 KB</div>
+        </a>
+        <a class="doc" href="https://github.com/Qing2220/personalweb/blob/main/docs/技术方案.md">
+          <div class="tag">主交付 · MARKDOWN</div>
+          <h3>技术方案（同源）</h3>
+          <p>改内容改这份，再重新导出 Word。每条需求都能追到站点任务号与关卡确认人。</p>
+          <div class="file">docs/技术方案.md · 36 KB</div>
+        </a>
+        <a class="doc" href="https://github.com/Qing2220/personalweb/blob/main/docs/提示词.md">
+          <div class="tag">主交付 · 提示词</div>
+          <h3>十条提示词</h3>
+          <p>P0 通用约束、P1 六视角 36 问访谈官、P2 证据抽取、P3 四来源收敛、P4 阶段作品、P5 关卡评审，以及门诊四个业务场景。</p>
+          <div class="file">docs/提示词.md · 26 KB</div>
+        </a>
+        <a class="doc" href="https://github.com/Qing2220/personalweb/blob/main/docs/00-九阶段基线.md">
+          <div class="tag">依据 · 基线</div>
+          <h3>九阶段基线</h3>
+          <p>站点原样记录：九个阶段、九道关卡、27 项任务、10 个工具、六视角 36 问、7 维评分、提交四字段。</p>
+          <div class="file">docs/00-九阶段基线.md · 21 KB</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="numbers">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>关键口径</h2>
+        <span class="section-note">数字都带出处，不四舍五入</span>
+      </div>
+      <div class="stats">
+        <div class="stat">
+          <div class="n">27</div>
+          <div class="k">项任务</div>
+          <div class="d">9 阶段 × 3 步，每步一个工具、一份产出</div>
+        </div>
+        <div class="stat">
+          <div class="n">36</div>
+          <div class="k">个访谈问题</div>
+          <div class="d">六视角 × 6 问，未问满不算完成现场调研</div>
+        </div>
+        <div class="stat warn">
+          <div class="n">24<small>/36</small></div>
+          <div class="k">已获直接证据</div>
+          <div class="d">间接 7、缺口 5，G2 只能「有条件通过」</div>
+        </div>
+        <div class="stat">
+          <div class="n">60</div>
+          <div class="k">分关卡线</div>
+          <div class="d">7 个维度打分，模型只给分，具名确认人签核</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="stages">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>九阶段与九道关卡</h2>
+        <span class="section-note">关卡不过，下一阶段不开放</span>
+      </div>
+      <div class="stages">
+
+        <article class="stage">
+          <div class="top"><span class="num">01</span><h3>业务挖掘</h3></div>
+          <p class="goal">从经营目标、真实事件和指标基线判断是否值得立项。</p>
+          <p class="gate">关卡：业务负责人确认问题、指标口径与调查范围</p>
+          <span class="status done">已完成（待现场确认）</span>
+          <a href="https://github.com/Qing2220/personalweb/blob/main/docs/01-业务挖掘.md">看 01-业务挖掘</a>
+        </article>
+
+        <article class="stage">
+          <div class="top"><span class="num">02</span><h3>现场调研</h3></div>
+          <p class="goal">还原实际流程，用多角色、多来源材料核实问题。</p>
+          <p class="gate">关卡：关键流程、异常、矛盾与待核实项已成记录</p>
+          <span class="status part">有条件通过 24/36</span>
+          <a href="https://github.com/Qing2220/personalweb/blob/main/docs/02-调研记录.md">看 02-调研记录</a>
+        </article>
+
+        <article class="stage">
+          <div class="top"><span class="num">03</span><h3>需求定义</h3></div>
+          <p class="goal">把调查发现收敛为有证据、可验收、可追责的需求。</p>
+          <p class="gate">关卡：优先级、范围与可测验收条件均有确认</p>
+          <span class="status todo">未开始</span>
+        </article>
+
+        <article class="stage">
+          <div class="top"><span class="num">04</span><h3>方案设计</h3></div>
+          <p class="goal">以最小试点验证价值，设计数据、系统与人工控制。</p>
+          <p class="gate">关卡：试点边界、取舍、权限与实施计划已评审</p>
+          <span class="status part">方案已成，待三方评审</span>
+          <a href="docs/技术方案.docx">看技术方案</a>
+        </article>
+
+        <article class="stage">
+          <div class="top"><span class="num">05</span><h3>构建集成</h3></div>
+          <p class="goal">实现可运行的最小闭环，让规则、模型与人工责任可追溯。</p>
+          <p class="gate">关卡：指定版本可复现运行，异常与交接路径完整</p>
+          <span class="status todo">未开始</span>
+        </article>
+
+        <article class="stage">
+          <div class="top"><span class="num">06</span><h3>测试评估</h3></div>
+          <p class="goal">证明行为与需求一致，区分模拟验证与真实调用。</p>
+          <p class="gate">关卡：范围、版本、失败项、复测与剩余风险可审查</p>
+          <span class="status todo">未开始</span>
+        </article>
+
+        <article class="stage">
+          <div class="top"><span class="num">07</span><h3>客户试点</h3></div>
+          <p class="goal">在受控范围验证实际采用与业务收益。</p>
+          <p class="gate">关卡：试点对照、反馈、退出条件与扩大决定有记录</p>
+          <span class="status todo">未开始</span>
+        </article>
+
+        <article class="stage">
+          <div class="top"><span class="num">08</span><h3>上线交接</h3></div>
+          <p class="goal">把通过试点的版本交给具名负责人，明确回退责任。</p>
+          <p class="gate">关卡：业务、技术、风险三方准备与交接决定有依据</p>
+          <span class="status todo">未开始</span>
+        </article>
+
+        <article class="stage">
+          <div class="top"><span class="num">09</span><h3>运营迭代</h3></div>
+          <p class="goal">持续观察价值、质量与成本，形成下一轮发现。</p>
+          <p class="gate">关卡：运营节奏、事件闭环、复盘与下轮优先级已确认</p>
+          <span class="status todo">未开始</span>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="boundaries">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>三条硬边界</h2>
+        <span class="section-note">写进代码，不写在提示词里</span>
+      </div>
+      <ul class="plain">
+        <li><b>模型不在判定链上。</b>号源能不能用、该走哪条流程，由确定性规则算；模型只把结论翻译成导医能说的话。模型出错最坏是「话说得不好听」，不是「给错结论」。</li>
+        <li><b>关卡不由模型签核。</b>模型按 7 个维度打分，通过与否由具名确认人签；FDE 只提交作品，不能给自己签核。</li>
+        <li><b>数据双层脱敏。</b>入模型前一次、出站再一次。只做一层，加个日志就漏。</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="verify">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>怎么验证这份交付</h2>
+        <span class="section-note">命令可直接复制运行</span>
+      </div>
+      <div class="cmd">
+        <button type="button" id="copy-btn">复制</button>
+        <pre id="cmd-text"><span class="c"># 27 个任务号是否齐全（期望 27）</span>
+grep -oE "S[1-9]-[1-3]" docs/技术方案.md | sort -u | wc -l
+
+<span class="c"># 九阶段 id 是否齐全（期望 9）</span>
+grep -oE "opportunity|discovery|definition|solution|build|validation|pilot|handoff|operation" docs/技术方案.md | sort -u | wc -l
+
+<span class="c"># 提示词是否 10 条（期望 10）</span>
+grep -cE "^## P[0-9] " docs/提示词.md</pre>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap" style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;width:100%">
+    <span>杨美玲 · f25011412 · 合成教学案例，人物与数值均非真实医院数据</span>
+    <span><a href="https://github.com/Qing2220/personalweb">GitHub 仓库</a> · <a href="LICENSE">MIT</a></span>
+  </div>
+</footer>
+
+<script>
+  // 复制命令：优先用 Clipboard API，失败时退回选中文本，保证本地 file:// 打开也能用
+  (function () {
+    var btn = document.getElementById('copy-btn');
+    var pre = document.getElementById('cmd-text');
+    if (!btn || !pre) return;
+    btn.addEventListener('click', function () {
+      var text = pre.innerText;
+      var done = function () {
+        btn.textContent = '已复制';
+        setTimeout(function () { btn.textContent = '复制'; }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } else {
+        fallback();
+      }
+      function fallback() {
+        var range = document.createRange();
+        range.selectNodeContents(pre);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        try { document.execCommand('copy'); done(); } catch (e) { btn.textContent = '请手动选中'; }
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>
